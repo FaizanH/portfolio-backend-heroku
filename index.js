@@ -3,8 +3,8 @@
 const express = require("express");
 const cors = require("cors");
 const mongoose = require("mongoose");
-const ATLAS_URI = "mongodb+srv://faizanh:4v1v5kD8vDphFhV8@cluster0.fd8kk.mongodb.net/portfolioDB?retryWrites=true&w=majority";
-// const ATLAS_URI = "mongodb://faizanh:4v1v5kD8vDphFhV8@cluster0-shard-00-00.fd8kk.mongodb.net:27017,cluster0-shard-00-01.fd8kk.mongodb.net:27017,cluster0-shard-00-02.fd8kk.mongodb.net:27017/portfolioDB?ssl=true&replicaSet=atlas-4tmqnz-shard-0&authSource=admin&retryWrites=true&w=majority";
+const ATLAS_URI = "";
+// const ATLAS_URI = "";
 const bodyParser = require('body-parser');
 const swaggerUi = require("swagger-ui-express");
 const swaggerDocument = require('./api/swagger.json');
