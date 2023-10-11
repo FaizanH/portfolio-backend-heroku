@@ -12,7 +12,7 @@ const swaggerDocument = require('./api/swagger.json');
 // const passport = require("passport");
 const cookieParser = require("cookie-parser");
 const session = require("express-session");
-const port = 8080;
+const port = 5001;
 
 const app = new express();
 const router = express.Router();
@@ -23,7 +23,7 @@ const router = express.Router();
 // BEGIN MIDDLEWARE
 app.use(express.json());
 app.use(cors({
-  origin: 'http://localhost:3000',
+  origin: 'http://localhost:5001',
   methods: ['GET', 'PUT', 'POST', 'PATCH', 'DELETE', 'OPTIONS'],
   credentials: true
 }))
