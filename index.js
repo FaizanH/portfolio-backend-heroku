@@ -12,7 +12,6 @@ const swaggerDocument = require('./api/swagger.json');
 // const passport = require("passport");
 const cookieParser = require("cookie-parser");
 const session = require("express-session");
-const port = 5001;
 
 const app = new express();
 const router = express.Router();
@@ -23,7 +22,7 @@ const router = express.Router();
 // BEGIN MIDDLEWARE
 app.use(express.json());
 app.use(cors({
-  origin: 'http://localhost:5001',
+  origin: 'https://public-profile-backend-177cfb33de27.herokuapp.com',
   methods: ['GET', 'PUT', 'POST', 'PATCH', 'DELETE', 'OPTIONS'],
   credentials: true
 }))
@@ -78,6 +77,6 @@ app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 app.use('/api/v1', router);
 // app.use('/auth', authRouter);
 
-app.listen(port, () => {
+app.listen(process.env.PORT || 5001, () => {
   console.log("Successfully retrieved backend data")
 })
