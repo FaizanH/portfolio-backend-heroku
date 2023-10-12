@@ -19,9 +19,10 @@ const router = express.Router();
 // https://localhost:5001/faizan-business-profile/us-central1/app
 
 // BEGIN MIDDLEWARE
+// https://public-profile-backend-177cfb33de27.herokuapp.com
 app.use(express.json());
 app.use(cors({
-  origin: 'https://public-profile-backend-177cfb33de27.herokuapp.com',
+  origin: 'https://faizanh.github.io/portfolio/',
   methods: ['GET', 'PUT', 'POST', 'PATCH', 'DELETE', 'OPTIONS'],
   credentials: true
 }))
