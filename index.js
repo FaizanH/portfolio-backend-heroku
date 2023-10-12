@@ -20,9 +20,10 @@ const router = express.Router();
 
 // BEGIN MIDDLEWARE
 // https://public-profile-backend-177cfb33de27.herokuapp.com
+// https://faizanh.github.io/portfolio/
 app.use(express.json());
 app.use(cors({
-  origin: 'https://faizanh.github.io/portfolio/',
+  origin: 'http://localhost:3000',
   methods: ['GET', 'PUT', 'POST', 'PATCH', 'DELETE', 'OPTIONS'],
   credentials: true
 }))
