@@ -23,7 +23,7 @@ const router = express.Router();
 // https://faizanh.github.io/portfolio/
 app.use(express.json());
 app.use(cors({
-  origin: 'http://localhost:3000',
+  origin: 'https://faizanh.github.io/',
   methods: ['GET', 'PUT', 'POST', 'PATCH', 'DELETE', 'OPTIONS'],
   credentials: true
 }))
