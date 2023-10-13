@@ -23,7 +23,7 @@ const router = express.Router();
 // https://faizanh.github.io/portfolio/
 app.use(express.json());
 app.use(cors({
-  origin: 'https://portfolio-app-0dj3.onrender.com',
+  origin: 'https://faizans-portfolio.onrender.com',
   methods: ['GET', 'PUT', 'POST', 'PATCH', 'DELETE', 'OPTIONS'],
   credentials: true
 }))
