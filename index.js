@@ -20,7 +20,8 @@ const router = express.Router();
 
 // BEGIN MIDDLEWARE
 // https://public-profile-backend-177cfb33de27.herokuapp.com
-// https://faizanh.github.io/portfolio/
+// https://portfolio-backend-pw8x.onrender.com
+
 app.use(express.json());
 app.use(cors({
   origin: 'https://faizans-portfolio.onrender.com',
