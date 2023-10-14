@@ -1,4 +1,4 @@
-# Portfolio: Collection (Backend)
+# Portfolio: Collection (Back-End)
 ### Built using Node and MongoDB
 
 ## Project Structure
