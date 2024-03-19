@@ -1,12 +1,12 @@
-const keys = require("../keys.json");
+// const keys = require("../keys.json");
 
 const mongoose = require("mongoose");
 const Schema = mongoose.Schema;
 
-const bcrypt = require("bcrypt");
+// const bcrypt = require("bcrypt");
 const SALT_WORK_FACTOR = 10;
-const jwt = require("jsonwebtoken");
-const jwtPrivateSecret = keys.private.replace(/\\n/g, '\n');
+// const jwt = require("jsonwebtoken");
+// const jwtPrivateSecret = keys.private.replace(/\\n/g, '\n');
 
 const userSchema = new Schema({
     status: {
@@ -51,16 +51,16 @@ userSchema.pre("save", function(next) {
 
     if (!user.isModified("password")) return next();
 
-    bcrypt.genSalt(SALT_WORK_FACTOR, function(err, salt) {
-        if (err) return next(err);
+    // bcrypt.genSalt(SALT_WORK_FACTOR, function(err, salt) {
+    //     if (err) return next(err);
 
-        bcrypt.hash(user.password, salt, function(err, hash) {
-            if (err) return next(err);
-            //override cleartext password with hash
-            user.password = hash;
-            next();
-        });
-    });
+    //     bcrypt.hash(user.password, salt, function(err, hash) {
+    //         if (err) return next(err);
+    //         //override cleartext password with hash
+    //         user.password = hash;
+    //         next();
+    //     });
+    // });
 });
 
 userSchema.methods.comparePassword = async function(password) {
@@ -75,12 +75,12 @@ userSchema.methods.comparePasswordChange = function(candidatePassword, cb) {
 }
 
 // Only 15 mins is good (600 seconds)
-userSchema.methods.generateVerificationToken = function() {
-    return jwt.sign({ id: this._id }, jwtPrivateSecret, {
-        expiresIn: "900s",
-        algorithm: "RS256",
-    });
-}
+// userSchema.methods.generateVerificationToken = function() {
+//     return jwt.sign({ id: this._id }, jwtPrivateSecret, {
+//         expiresIn: "900s",
+//         algorithm: "RS256",
+//     });
+// }
 
 const User = mongoose.model("User", userSchema);
 

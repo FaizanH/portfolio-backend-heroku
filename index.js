@@ -1,5 +1,6 @@
 // Link to local url: http://localhost:5001/faizan-business-profile/us-central1/app
 
+const env = require("dotenv").config()
 const express = require("express");
 const cors = require("cors");
 const mongoose = require("mongoose");
@@ -62,7 +63,7 @@ connection.once("open", () => {
 // Database
 const blogsRouter = require("./routes/blog_posts");
 const postsRouter = require("./routes/posts");
-// const authRouter = require("./routes/auth");
+const authRouter = require("./routes/auth");
 
 // Add Routes here
 /*
@@ -77,7 +78,7 @@ app.use("/blogposts", blogsRouter);
 app.use("/posts", postsRouter);
 app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 app.use('/api/v1', router);
-// app.use('/auth', authRouter);
+app.use('/auth', authRouter);
 
 app.listen(process.env.PORT || 5001, () => {
   console.log("Successfully retrieved backend data")
