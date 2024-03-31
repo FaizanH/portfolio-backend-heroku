@@ -1,20 +1,23 @@
-const User = require('../models/User')
+const User = require('../models/user.model')
 const bcrypt = require('bcrypt')
 const jwt = require('jsonwebtoken')
+const asyncHandler = require('express-async-handler')
 
 // @desc Login
 // @route POST /auth
 // @access Public
-const login = async (req, res) => {
+const login = asyncHandler(async (req, res) => {
     const { username, password } = req.body
 
     if (!username || !password) {
         return res.status(400).json({ message: 'All fields are required' })
     }
 
+    // returning null
     const foundUser = await User.findOne({ username }).exec()
 
-    if (!foundUser || !foundUser.active) {
+    if (!foundUser || foundUser.status != "Active") {
+        
         return res.status(401).json({ message: 'Unauthorized' })
     }
 
@@ -26,7 +29,7 @@ const login = async (req, res) => {
         {
             "UserInfo": {
                 "username": foundUser.username,
-                "roles": foundUser.roles
+                "permission_group": foundUser.permission_group
             }
         },
         process.env.ACCESS_TOKEN_SECRET,
@@ -49,7 +52,7 @@ const login = async (req, res) => {
 
     // Send accessToken containing username and roles 
     res.json({ accessToken })
-}
+})
 
 // @desc Refresh
 // @route GET /auth/refresh
@@ -75,7 +78,7 @@ const refresh = (req, res) => {
                 {
                     "UserInfo": {
                         "username": foundUser.username,
-                        "roles": foundUser.roles
+                        "permission_group": foundUser.permission_group
                     }
                 },
                 process.env.ACCESS_TOKEN_SECRET,
