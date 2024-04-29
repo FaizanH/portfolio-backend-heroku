@@ -1,8 +1,7 @@
 const mongoose = require("mongoose");
-const Schema = mongoose.Schema;
 
 const default_url = "https://via.placeholder.com/300";
-const pageSchema = new Schema({
+const pageSchema = new mongoose.Schema({
     title: {
         type: String,
         required: true
@@ -69,5 +68,4 @@ const pageSchema = new Schema({
     timestamps: true
 });
 
-const Blogpost = mongoose.model("Blogpost", pageSchema);
-module.exports = Blogpost;
+module.exports = mongoose.model("Blogpost", pageSchema);

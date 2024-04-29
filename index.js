@@ -26,7 +26,7 @@ const PORT = process.env.PORT || 5001
 
 app.use(express.json());
 app.use(cors({
-  origin: 'https://faizans-portfolio.onrender.com',
+  origin: 'http://localhost:3000',
   methods: ['GET', 'PUT', 'POST', 'PATCH', 'DELETE', 'OPTIONS'],
   credentials: true
 }))
