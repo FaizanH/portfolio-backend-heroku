@@ -6,7 +6,7 @@ function paginatedResults(model) {
     return async (req, res, next) => {
         let page = parseInt(req.query.page);
         let limit = parseInt(req.query.limit);
-        // let isPrivate = req.body.isPrivate;
+        let isPrivate = req.query.private;
         // {"isPrivate": { "$eq": false }}
         const totalResults = await model.countDocuments().exec();
 
@@ -20,7 +20,10 @@ function paginatedResults(model) {
 
         const results = {};
         try {
-            results.results = await model.find().sort({ "_id": -1 }).limit(limit).skip(startIndex).exec();
+            if (isPrivate)
+                results.results = await model.find( {isPrivate: isPrivate} ).sort({ "_id": -1 }).limit(limit).skip(startIndex).exec();
+            else
+                results.results = await model.find().sort({ "_id": -1 }).limit(limit).skip(startIndex).exec();
             results.total = Math.ceil(totalResults / limit);
             if (endIndex < totalResults) {
                 results.next = {
@@ -75,6 +78,12 @@ router.route("/:id").get((req, res) => {
         .then(post => res.json(post))
         .catch(err => res.status(400).json("Error: " + err));
 });
+
+// router.route("/public/:id").get((req, res) => {
+//     Blogpost.findById(req.params.id, {isPrivate:false})
+//         .then(post => res.json(post))
+//         .catch(err => res.status(400).json("Error: " + err));
+// });
 
 router.route("/update/:id").post((req, res) => {
     Blogpost.findById(req.params.id)
