@@ -29,11 +29,10 @@ const userSchema = new mongoose.Schema({
         type: String,
         default: ""
     },
-    permission_group: {
-        type: String,
-        enum: ["Administrator", "Staff User", "Standard User"],
-        default: "Standard User"
-    }
+    roles: {
+        type: [String],
+        default: ["Employee"]
+    },
 }, {
     timestamps: true,
 });
