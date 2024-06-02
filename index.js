@@ -32,7 +32,7 @@ const PORT = process.env.PORT || 8126
 
 app.use(express.json())
 app.use(cors({
-  origin: 'https://faizans-portfolio.onrender.com',
+  origin: 'https://www.sfaizh.top',
   methods: ['GET', 'PUT', 'POST', 'PATCH', 'DELETE', 'OPTIONS'],
   credentials: true
 }))
@@ -48,9 +48,9 @@ app.use(
   session({
     name: "__session",
     secret: "secretcode",
-    // store: new MemoryStore({
-    //   checkPeriod: 60000 // prune expired entries every 24h 86400000
-    // }),
+    store: new MemoryStore({
+      checkPeriod: 60000 // prune expired entries every 24h 86400000
+    }),
     resave: true,
     saveUninitialized: true,
     cookie: {maxAge : 60000, secure: false, httpOnly: false }
