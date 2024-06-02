@@ -32,7 +32,7 @@ const PORT = process.env.PORT || 8126
 
 app.use(express.json())
 app.use(cors({
-  origin: 'https://www.sfaizh.top',
+  origin: 'https://sfaizh.top',
   methods: ['GET', 'PUT', 'POST', 'PATCH', 'DELETE', 'OPTIONS'],
   credentials: true
 }))
