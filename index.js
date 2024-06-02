@@ -16,7 +16,7 @@ const swaggerDocument = require('./api/swagger.json')
 
 const cookieParser = require("cookie-parser")
 const session = require("express-session")
-// const MemoryStore = require("memorystore")(session)
+const MemoryStore = require("memorystore")(session)
 
 const mongoDBConnection = require('./config/dbConn')
 const PORT = process.env.PORT || 8126
