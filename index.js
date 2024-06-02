@@ -16,7 +16,7 @@ const swaggerDocument = require('./api/swagger.json')
 
 const cookieParser = require("cookie-parser")
 const session = require("express-session")
-const MemoryStore = require("memorystore")(session)
+// const MemoryStore = require("memorystore")(session)
 
 const mongoDBConnection = require('./config/dbConn')
 const PORT = process.env.PORT || 8126
@@ -48,9 +48,9 @@ app.use(
   session({
     name: "__session",
     secret: "secretcode",
-    store: new MemoryStore({
-      checkPeriod: 60000 // prune expired entries every 24h 86400000
-    }),
+    // store: new MemoryStore({
+    //   checkPeriod: 60000 // prune expired entries every 24h 86400000
+    // }),
     resave: true,
     saveUninitialized: true,
     cookie: {maxAge : 60000, secure: false, httpOnly: false }
