@@ -52,7 +52,7 @@ app.use(
     }),
     resave: true,
     saveUninitialized: true,
-    cookie: {maxAge : 60000, secure: false, httpOnly: false }
+    // cookie: {maxAge : 60000, secure: false, httpOnly: false }
   })
 )
 
