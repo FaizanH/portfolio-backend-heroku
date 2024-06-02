@@ -1,7 +1,7 @@
-const tracer = require('dd-trace').init({
-  hostname: 'datadog-agent',
-  port: 8126
-})
+// const tracer = require('dd-trace').init({
+//   hostname: 'datadog-agent',
+//   port: 8126
+// })
 
 require("dotenv").config()
 const express = require("express")
@@ -31,7 +31,7 @@ const PORT = process.env.PORT || 5001
 
 app.use(express.json())
 app.use(cors({
-  origin: 'http://localhost:3000',
+  origin: 'https://faizans-portfolio.onrender.com',
   methods: ['GET', 'PUT', 'POST', 'PATCH', 'DELETE', 'OPTIONS'],
   credentials: true
 }))
