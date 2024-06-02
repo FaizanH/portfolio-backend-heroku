@@ -43,6 +43,7 @@ app.use(bodyParser.urlencoded({     // to support URL-encoded bodies
 }))
 
 app.use(cookieParser("secretcode"))
+app.set('trust proxy', '127.0.0.1')
 app.use(
   session({
     name: "__session",
