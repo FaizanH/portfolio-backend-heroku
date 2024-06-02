@@ -19,7 +19,7 @@ const session = require("express-session")
 const MemoryStore = require("memorystore")(session)
 
 const mongoDBConnection = require('./config/dbConn')
-const PORT = process.env.PORT || 5001
+const PORT = process.env.PORT || 8126
 
 // const router = express.Router()
 
