@@ -1,14 +1,4 @@
-# Portfolio: Collection (Back-End)
-### Built using Node and MongoDB
-
-## Project Structure
-- $root
-    - api
-    - config
-    - controllers
-    - middleware
-    - model
-    - routes
+## API Server for sfaizh.top
 
 ## Install dependencies
 ```
