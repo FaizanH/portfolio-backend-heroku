@@ -1,5 +1,6 @@
 const router = require("express").Router();
 let Blogpost = require("../models/blogpost.model");
+const slug = require('slug')
 
 // Paginate
 function paginatedResults(model) {
@@ -55,6 +56,7 @@ router.route("/").get(paginatedResults(Blogpost), (req, res) => {
 });
 
 router.route("/add").post((req, res) => {
+    const s = slug(req.body.title);
     const title = req.body.title;
     const subtitle = req.body.subtitle;
     const description = req.body.description;
@@ -66,15 +68,15 @@ router.route("/add").post((req, res) => {
         "main": req.body.images.main
     }
     const isPrivate = req.body.isPrivate;
-    const post = new Blogpost({ title, subtitle, description, author, date, tags, footer, images, isPrivate });
+    const post = new Blogpost({ slug: s, title, subtitle, description, author, date, tags, footer, images, isPrivate });
 
     post.save()
         .then(() => res.json("New Blogpost Created"))
         .catch(err => res.status(400).json("Error:" + err));
 });
 
-router.route("/:id").get((req, res) => {
-    Blogpost.findById(req.params.id)
+router.route("/:slug").get((req, res) => {
+  Blogpost.findOne({'slug': req.params.slug})
         .then(post => res.json(post))
         .catch(err => res.status(400).json("Error: " + err));
 });
@@ -85,8 +87,8 @@ router.route("/:id").get((req, res) => {
 //         .catch(err => res.status(400).json("Error: " + err));
 // });
 
-router.route("/update/:id").post((req, res) => {
-    Blogpost.findById(req.params.id)
+router.route("/update/:slug").post((req, res) => {
+  Blogpost.findOne({'slug': req.params.slug})
         .then(post => {
             post.title = req.body.title
             post.subtitle = req.body.subtitle
@@ -107,8 +109,8 @@ router.route("/update/:id").post((req, res) => {
         .catch(err => res.status(400).json("Error: " + err));
 });
 
-router.route("/:id").delete((req, res) => {
-    Blogpost.findByIdAndDelete(req.params.id)
+router.route("/:slug").delete((req, res) => {
+    Blogpost.findOneAndDelete({'slug': req.params.slug})
         .then(post => res.json("Post deleted: " + post))
         .catch(err => res.status(400).json("Error: " + err));
 });

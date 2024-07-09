@@ -6,6 +6,11 @@ const pageSchema = new mongoose.Schema({
         type: String,
         required: true
     },
+    slug: {
+        type: String,
+        required: true,
+        default:""
+    },
     subtitle: {
         type: String,
         default: "Some subtitle text"
