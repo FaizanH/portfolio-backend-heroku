@@ -90,6 +90,7 @@ router.route("/:slug").get((req, res) => {
 router.route("/update/:slug").post((req, res) => {
   Blogpost.findOne({'slug': req.params.slug})
         .then(post => {
+            post.slug = req.body.slug
             post.title = req.body.title
             post.subtitle = req.body.subtitle
             post.description = req.body.description
