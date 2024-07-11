@@ -1,14 +1,13 @@
-// const tracer = require('dd-trace').init({
-//   hostname: 'datadog-agent',
-//   port: 8126
-// })
+const tracer = require('dd-trace').init({
+  hostname: 'datadog-agent',
+  port: 8126
+})
 
 require("dotenv").config()
 const express = require("express")
 const app = express()
 const cors = require("cors")
 const mongoose = require("mongoose")
-const ATLAS_URI = process.env.MONGODB_URI
 const bodyParser = require('body-parser')
 
 const swaggerUi = require("swagger-ui-express")
@@ -20,16 +19,9 @@ const MemoryStore = require("memorystore")(session)
 
 const mongoDBConnection = require('./config/dbConn')
 const PORT = process.env.PORT || 8126
-
-// const router = express.Router()
+const { logEvents } = require('./middleware/logger.js')
 
 // BEGIN MIDDLEWARE
-// https://public-profile-backend-177cfb33de27.herokuapp.com
-// https://portfolio-backend-pw8x.onrender.com
-
-// link to live origin
-// https://faizans-portfolio.onrender.com
-
 app.use(express.json())
 app.use(cors({
   origin: 'https://www.sfaizh.top',
@@ -53,7 +45,7 @@ app.use(
     }),
     resave: true,
     saveUninitialized: true,
-    cookie: {maxAge : 60000, secure: false, httpOnly: false }
+    cookie: { maxAge: 60000, secure: false, httpOnly: false }
   })
 )
 
@@ -73,18 +65,18 @@ app.get("/", (req, res) => {
 })
 app.use("/blogposts", blogsRouter)
 app.use("/posts", postsRouter)
-app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument))
-// app.use('/api/v1', router)
+//app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument))
 app.use('/users', userRouter)
 app.use('/auth', authRouter)
 
 // Start server
 mongoose.connection.once("open", () => {
   console.log("MongoDB connection established successfully")
-  app.listen(PORT, () => console.log(`Server running on port ${PORT}`))
+  logEvents('INFO', `Started MongoDB connection on port ${PORT}`, 'events.log')
+  app.listen(PORT, () => console.log(`Started MongoDB connection on port ${PORT}`))
 })
 
 mongoose.connection.on('error', err => {
   console.log(err)
-  // logEvents(`${err.no}: ${err.code}\t${err.syscall}\t${err.hostname}`, 'mongoErrLog.log')
+  logEvents('ERROR', `${err.no}: ${err.code}\t${err.syscall}\t${err.hostname}`, 'mongoErrLog.log')
 })
