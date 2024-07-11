@@ -43,6 +43,9 @@ RUN apt-get -yq update && apt-get -yq upgrade && apt-get install -yq npm
 
 WORKDIR /usr/src/app
 
+# ADD package.json /usr/src/app/package.json
+COPY package*.json ./
+
 RUN npm install
 
 # Download dependencies as a separate step to take advantage of Docker's caching.
