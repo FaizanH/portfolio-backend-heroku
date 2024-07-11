@@ -37,14 +37,15 @@ ENV NODE_ENV production
 
 RUN apt-get -yq update && apt-get -yq upgrade && apt-get install -yq npm
 
-#RUN cache clean --force
+RUN cache clean --force
 
-#RUN npm install -g n && n latest
+RUN npm install -g n && n latest
 
 WORKDIR /usr/src/app
 
 # ADD package.json /usr/src/app/package.json
 COPY package*.json ./
+COPY --chown=node:node ./package*.json ./
 
 RUN npm install
 
@@ -52,7 +53,7 @@ RUN npm install
 # Leverage a cache mount to /root/.npm to speed up subsequent builds.
 # Leverage a bind mounts to package.json and package-lock.json to avoid having to copy them into
 # into this layer.
-RUN --mount=type=bind,source=package.json,target=package.json \
+ RUN --mount=type=bind,source=package.json,target=package.json \
     --mount=type=bind,source=package-lock.json \
     --mount=type=cache,target=/root/.npm \
     npm ci --omit=dev
