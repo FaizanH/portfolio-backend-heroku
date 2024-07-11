@@ -35,10 +35,9 @@ ENV DD_HOSTNAME=$RENDER_SERVICE_NAME
 # Use production node environment by default.
 ENV NODE_ENV production
 
+RUN apt-get -yq update && apt-get -yq upgrade && apt-get install -yq npm
 
 WORKDIR /usr/src/app
-
-RUN apt-get -yq update && apt-get -yq upgrade && apt-get install -yq nodejs && apt-get install -yq npm && npm --version && npm install
 
 # Download dependencies as a separate step to take advantage of Docker's caching.
 # Leverage a cache mount to /root/.npm to speed up subsequent builds.
