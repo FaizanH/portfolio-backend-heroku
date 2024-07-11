@@ -50,7 +50,7 @@ RUN npm install
 # Leverage a bind mounts to package.json and package-lock.json to avoid having to copy them into
 # into this layer.
 RUN --mount=type=bind,source=package.json,target=package.json \
-    --mount=type=bind,source=package-lock.json,target=package-lock.json \
+    --mount=type=bind,source=package-lock.json \
     --mount=type=cache,target=/root/.npm \
     npm ci --omit=dev
 
