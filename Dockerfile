@@ -13,7 +13,7 @@ FROM node:${NODE_VERSION}-alpine
 # Use production node environment by default.
 ENV NODE_ENV production
 
-RUN apt-get -yq update && apt-get -yq upgrade && apt-get install -yq npm
+RUN apk-get -yq update && apk-get -yq upgrade && apk-get install -yq npm
 
 WORKDIR /usr/src/app
 
