@@ -1,25 +1,5 @@
 # syntax=docker/dockerfile:1.4
 
-FROM node:lts-buster-slim AS development
-
-# Create app directory
-WORKDIR /usr/src/app
-
-COPY package.json /usr/src/app/package.json
-COPY package-lock.json /usr/src/app/package-lock.json
-RUN npm ci
-
-COPY --chown=node:node . /usr/src/app
-
-# Run the application as a non-root user.
-USER node
-
-# Expose the port that the application listens on.
-EXPOSE 5001
-
-# Run the application.
-CMD [ "npm", "start" ]
-
 FROM datadog/agent:7
 
 # disable autoconfigured checks; DD container checks
@@ -41,3 +21,23 @@ ARG RENDER_SERVICE_NAME=sfaizh-api-docker-dd
 
 ENV DD_BIND_HOST=$RENDER_SERVICE_NAME
 ENV DD_HOSTNAME=$RENDER_SERVICE_NAME
+
+FROM node:lts-buster-slim AS development
+
+# Create app directory
+WORKDIR /usr/src/app
+
+COPY package.json /usr/src/app/package.json
+COPY package-lock.json /usr/src/app/package-lock.json
+RUN npm ci
+
+COPY --chown=node:node . /usr/src/app
+
+# Run the application as a non-root user.
+USER node
+
+# Expose the port that the application listens on.
+EXPOSE 5001
+
+# Run the application.
+CMD [ "npm", "start" ]
