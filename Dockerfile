@@ -6,7 +6,7 @@
 
 # Want to help us make this template better? Share your feedback here: https://forms.gle/ybq9Krt8jtBL3iCk7
 
-ARG NODE_VERSION=20.12.2
+ARG NODE_VERSION=20.15.1
 
 FROM node:${NODE_VERSION}-alpine
 
@@ -37,6 +37,8 @@ ENV NODE_ENV production
 
 
 WORKDIR /usr/src/app
+
+RUN apt-get update && apt-get install -y npm
 
 # Download dependencies as a separate step to take advantage of Docker's caching.
 # Leverage a cache mount to /root/.npm to speed up subsequent builds.
