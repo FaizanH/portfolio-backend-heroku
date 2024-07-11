@@ -39,13 +39,11 @@ RUN apt-get -yq update && apt-get -yq upgrade && apt-get install -yq npm
 
 WORKDIR /usr/src/app
 
-RUN npm -g install
-
 # ADD package.json /usr/src/app/package.json
 COPY package*.json ./
 COPY --chown=node:node ./package*.json ./
 
-RUN npm install
+RUN npm -g install
 
 # Download dependencies as a separate step to take advantage of Docker's caching.
 # Leverage a cache mount to /root/.npm to speed up subsequent builds.
