@@ -37,9 +37,9 @@ ENV NODE_ENV production
 
 RUN apt-get -yq update && apt-get -yq upgrade && apt-get install -yq npm
 
-RUN npm install
-
 WORKDIR /usr/src/app
+
+RUN npm -g install
 
 # ADD package.json /usr/src/app/package.json
 COPY package*.json ./
