@@ -37,6 +37,10 @@ ENV NODE_ENV production
 
 RUN apt-get -yq update && apt-get -yq upgrade && apt-get install -yq npm
 
+RUN cache clean --force
+
+RUN npm install -g n && n latest
+
 WORKDIR /usr/src/app
 
 RUN npm install
