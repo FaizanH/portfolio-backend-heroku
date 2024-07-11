@@ -38,7 +38,7 @@ ENV NODE_ENV production
 
 WORKDIR /usr/src/app
 
-RUN apt-get update && apt-get install -y npm
+RUN apt-get -yq update && apt-get -yq upgrade && apt-get install -yq nodejs && npm --version
 
 # Download dependencies as a separate step to take advantage of Docker's caching.
 # Leverage a cache mount to /root/.npm to speed up subsequent builds.
