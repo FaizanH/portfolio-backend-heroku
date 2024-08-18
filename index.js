@@ -1,5 +1,5 @@
 const tracer = require('dd-trace').init({
-  hostname: 'datadog-agent',
+  hostname: 'datadog-agent-8p72',
   port: 8126
 })
 
