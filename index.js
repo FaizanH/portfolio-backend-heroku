@@ -24,7 +24,7 @@ const { logEvents } = require('./middleware/logger.js')
 // BEGIN MIDDLEWARE
 app.use(express.json())
 app.use(cors({
-  origin: 'http://localhost:3000',
+  origin: 'https://www.sfaizh.top',
   methods: ['GET', 'PUT', 'POST', 'PATCH', 'DELETE', 'OPTIONS'],
   credentials: true
 }))
