@@ -1,84 +1,56 @@
 const router = require("express").Router();
 let Blogpost = require("../models/blogpost.model");
+const { paginatedResults, getBlog, createNewBlog, updateBlog, deleteBlog } = require('../controllers/blogsController')
 const slug = require('slug')
-
-// Paginate
-function paginatedResults(model) {
-    return async (req, res, next) => {
-        let page = parseInt(req.query.page);
-        let limit = parseInt(req.query.limit);
-        let isPrivate = req.query.private;
-        // {"isPrivate": { "$eq": false }}
-        const totalResults = await model.countDocuments().exec();
-
-        if (!page)
-            page = 1;
-        if (!limit)
-            limit = 10;
-
-        const startIndex = (page - 1) * limit;
-        const endIndex = page * limit;
-
-        const results = {};
-        try {
-            if (isPrivate)
-                results.results = await model.find( {isPrivate: isPrivate} ).sort({ "_id": -1 }).limit(limit).skip(startIndex).exec();
-            else
-                results.results = await model.find().sort({ "_id": -1 }).limit(limit).skip(startIndex).exec();
-            results.total = Math.ceil(totalResults / limit);
-            if (endIndex < totalResults) {
-                results.next = {
-                    page: page + 1
-                }
-            }
-
-            if (startIndex > 0) {
-                results.prev = {
-                    page: page - 1
-                }
-            }
-            results.current = {
-                page: page
-            }
-            results.totalResults = totalResults;
-            res.paginatedResults = results;
-
-            next()
-        } catch (e) {
-            res.status(500).json({ message: e.message })
-        }
-    }
-}
+const { logEvents } = require('./../middleware/logger.js')
+const fs = require('node:fs')
 
 // List pages
 router.route("/").get(paginatedResults(Blogpost), (req, res) => {
-    res.json(res.paginatedResults);
+  res.json(res.paginatedResults);
 });
 
-router.route("/add").post((req, res) => {
-    const s = slug(req.body.title);
-    const title = req.body.title;
-    const subtitle = req.body.subtitle;
-    const description = req.body.description;
-    const author = req.body.author;
-    const date = req.body.date;
-    const tags = req.body.tags;
-    const footer = req.body.footer;
-    const images = {
-        "main": req.body.images.main
-    }
-    const isPrivate = req.body.isPrivate;
-    const post = new Blogpost({ slug: s, title, subtitle, description, author, date, tags, footer, images, isPrivate });
+router.route("/export").post(paginatedResults(Blogpost), (req, res) => {
+  // Save all blogs to md files on github
+  // Get all blogs from database
+  const posts = res.paginatedResults.results
+  // Grab json content and dump to files
+  // Loop over posts
+  for (let i = 0; i < posts.length; i++) {
+    // Save each to /data/backup/blogs folder
+    console.log(`./data/json/post-${(posts[i].slug == '') ? ('unnamed-post' + i) : posts[i].slug}.json`)
+    fs.writeFileSync(`./data/json/post-${(posts[i].slug == '') ? ('unnamed-post' + i) : posts[i].slug}.json`, JSON.stringify(posts[i]), (err) => {
+      if (err)
+        logevents('error', `error writing to filesystem: ${err}`, 'events.log')
+    })
+  }
+  res.send("Successfully exported all blogs")
+})
 
-    post.save()
-        .then(() => res.json("New Blogpost Created"))
-        .catch(err => res.status(400).json("Error:" + err));
+router.route("/add").post((req, res) => {
+  const s = slug(req.body.title);
+  const title = req.body.title;
+  const subtitle = req.body.subtitle;
+  const description = req.body.description;
+  const author = req.body.author;
+  const date = req.body.date;
+  const tags = req.body.tags;
+  const footer = req.body.footer;
+  const images = {
+    "main": req.body.images.main
+  }
+  const isPrivate = req.body.isPrivate;
+  const post = new Blogpost({ slug: s, title, subtitle, description, author, date, tags, footer, images, isPrivate });
+
+  post.save()
+    .then(() => res.json("New Blogpost Created"))
+    .catch(err => res.status(400).json("Error:" + err));
 });
 
 router.route("/:slug").get((req, res) => {
-  Blogpost.findOne({'slug': req.params.slug})
-        .then(post => res.json(post))
-        .catch(err => res.status(400).json("Error: " + err));
+  Blogpost.findOne({ 'slug': req.params.slug })
+    .then(post => res.json(post))
+    .catch(err => res.status(400).json("Error: " + err));
 });
 
 // router.route("/public/:id").get((req, res) => {
@@ -88,39 +60,39 @@ router.route("/:slug").get((req, res) => {
 // });
 
 router.route("/update/:slug").post((req, res) => {
-  Blogpost.findOne({'slug': req.params.slug})
-        .then(post => {
-            post.slug = req.body.slug
-            post.title = req.body.title
-            post.subtitle = req.body.subtitle
-            post.description = req.body.description
-            post.author = req.body.author
-            post.date = req.body.date
-            post.tags = req.body.tags
-            post.footer = req.body.footer
-            post.images = {
-                "main": req.body.images.main
-            }
-            post.isPrivate = req.body.isPrivate
+  Blogpost.findOne({ 'slug': req.params.slug })
+    .then(post => {
+      post.slug = req.body.slug
+      post.title = req.body.title
+      post.subtitle = req.body.subtitle
+      post.description = req.body.description
+      post.author = req.body.author
+      post.date = req.body.date
+      post.tags = req.body.tags
+      post.footer = req.body.footer
+      post.images = {
+        "main": req.body.images.main
+      }
+      post.isPrivate = req.body.isPrivate
 
-            post.save()
-                .then(() => res.json("Post updated"))
-                .catch(err => res.status(400).json("Error: " + err));
-        })
+      post.save()
+        .then(() => res.json("Post updated"))
         .catch(err => res.status(400).json("Error: " + err));
+    })
+    .catch(err => res.status(400).json("Error: " + err));
 });
 
 router.route("/:slug").delete((req, res) => {
-    Blogpost.findOneAndDelete({'slug': req.params.slug})
-        .then(post => res.json("Post deleted: " + post))
-        .catch(err => res.status(400).json("Error: " + err));
+  Blogpost.findOneAndDelete({ 'slug': req.params.slug })
+    .then(post => res.json("Post deleted: " + post))
+    .catch(err => res.status(400).json("Error: " + err));
 });
 
 // Mongo Section Update Promise - Fix for the fucked amount of concatenation in the next method
 async function SectionUpdatePromise(payload, res) {
-    return Promise.all(
+  return Promise.all(
 
-    )
+  )
 }
 
 // Update page section

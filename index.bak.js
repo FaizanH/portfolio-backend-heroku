@@ -9,6 +9,7 @@ const app = express()
 const cors = require("cors")
 const mongoose = require("mongoose")
 const bodyParser = require('body-parser')
+const path = require('path')
 
 const swaggerUi = require("swagger-ui-express")
 const swaggerDocument = require('./api/swagger.json')
@@ -20,6 +21,15 @@ const MemoryStore = require("memorystore")(session)
 const mongoDBConnection = require('./config/dbConn')
 const PORT = process.env.PORT || 8126
 const { logEvents } = require('./middleware/logger.js')
+
+// Crawlers detection
+const crawlerUserAgents = [
+  'facebookexternalhit', 'twitterbot', 'whatsapp', 'linkedinbot', 'telegrambot', 'slackbot', 'pinterest', 'discoursebot'
+]
+
+const isBot = (userAgent) => crawlerUserAgents.some(agent => userAgent.toLowerCase().includes(agent))
+
+app.use(express.static(path.join(__dirname, 'build')));
 
 // BEGIN MIDDLEWARE
 app.use(express.json())
@@ -53,6 +63,30 @@ app.use(
 
 // Database
 mongoDBConnection()
+
+// Handles every request
+app.get('*', (req, res) => {
+  const userAgent = req.headers['user-agent'];
+
+  if (isBot(userAgent)) {
+    const filePath = path.join(__dirname, 'build', 'index.html');
+    fs.readFile(filePath, 'utf8', (err, data) => {
+      if (err) {
+        return res.status(500).send('Error loading the page');
+      }
+
+      // Modify data to include dynamic meta tags
+      // const id = req.params.id || 'default'; // Get an ID from somewhere (params, query, etc.)
+      const imageUrl = `TEST_PATH`;
+      let result = data.replace('<meta property="og:image" content=""/>', `<meta name="og:image" content="${imageUrl}"/>`);
+
+      res.send(result);
+    });
+  } else {
+    // Normal users receive the standard SPA HTML
+    res.sendFile(path.join(__dirname, 'build', 'index.html'));
+  }
+});
 
 // Routes
 const blogsRouter = require("./routes/blog_posts")

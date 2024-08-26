@@ -2,72 +2,77 @@ const router = require("express").Router();
 let Blogpost = require("../models/blogpost.model");
 const asyncHandler = require('express-async-handler')
 const bcrypt = require('bcrypt')
+const slug = require('slug')
 
 // Paginate
+
 function paginatedResults(model) {
-    return async (req, res, next) => {
-        let page = parseInt(req.query.page);
-        let limit = parseInt(req.query.limit);
-        // let isPrivate = req.body.isPrivate;
-        // {"isPrivate": { "$eq": false }}
-        const totalResults = await model.countDocuments().exec();
+  return async (req, res, next) => {
+    let page = parseInt(req.query.page);
+    let limit = parseInt(req.query.limit);
+    let isPrivate = req.query.private;
+    // {"isPrivate": { "$eq": false }}
+    const totalResults = await model.countDocuments().exec();
 
-        if (!page)
-            page = 1;
-        if (!limit)
-            limit = 10;
+    if (!page)
+      page = 1;
+    if (!limit)
+      limit = 10;
 
-        const startIndex = (page - 1) * limit;
-        const endIndex = page * limit;
+    const startIndex = (page - 1) * limit;
+    const endIndex = page * limit;
 
-        const results = {};
-        try {
-            results.results = await model.find().sort({ "_id": -1 }).limit(limit).skip(startIndex).exec();
-            results.total = Math.ceil(totalResults / limit);
-            if (endIndex < totalResults) {
-                results.next = {
-                    page: page + 1
-                }
-            }
-
-            if (startIndex > 0) {
-                results.prev = {
-                    page: page - 1
-                }
-            }
-            results.current = {
-                page: page
-            }
-            results.totalResults = totalResults;
-            res.paginatedResults = results;
-
-            next()
-        } catch (e) {
-            res.status(500).json({ message: e.message })
+    const results = {};
+    try {
+      if (isPrivate)
+        results.results = await model.find({ isPrivate: isPrivate }).sort({ "_id": -1 }).limit(limit).skip(startIndex).exec();
+      else
+        results.results = await model.find().sort({ "_id": -1 }).limit(limit).skip(startIndex).exec();
+      results.total = Math.ceil(totalResults / limit);
+      if (endIndex < totalResults) {
+        results.next = {
+          page: page + 1
         }
+      }
+
+      if (startIndex > 0) {
+        results.prev = {
+          page: page - 1
+        }
+      }
+      results.current = {
+        page: page
+      }
+      results.totalResults = totalResults;
+      res.paginatedResults = results;
+
+      next()
+    } catch (e) {
+      res.status(500).json({ message: e.message })
     }
+  }
 }
 
 // List pages
-const getAllBlogs = asyncHandler(paginatedResults(Blogpost), (req, res) => {
-    res.json(res.paginatedResults);
-})
+// const getAllBlogs = asyncHandler(paginatedResults(Blogpost), async (req, res) => {
+//   res.json(res.paginatedResults);
+// })
 
 // router.route("/").get(paginatedResults(Blogpost), (req, res) => {
 //     res.json(res.paginatedResults);
 // });
 
 const getBlog = asyncHandler(async (req, res) => {
-    // Get id from params
-    const { id } = req.params.id
-    // Confirm data 
-    if (!id) {
-        return res.status(400).json({ message: 'Blog Id was not provided' })
-    }
+  // Get id from params
+  const { id } = req.params.id
+  // Confirm data 
+  if (!id) {
+    return res.status(400).json({ message: 'Blog Id was not provided' })
+  }
 
-    Blogpost.findById(req.params.id)
-        .then(post => res.json(post))
-        .catch(err => res.status(400).json("Error: " + err));
+  Blogpost.findById(req.params.id)
+    .then(post => res.json(post))
+    .catch(err => res.status(400).json("Error: " + err));
 })
 
 // router.route("/:id").get((req, res) => {
@@ -77,22 +82,22 @@ const getBlog = asyncHandler(async (req, res) => {
 // });
 
 const createNewBlog = asyncHandler(async (req, res) => {
-    const title = req.body.title;
-    const subtitle = req.body.subtitle;
-    const description = req.body.description;
-    const author = req.body.author;
-    const date = req.body.date;
-    const tags = req.body.tags;
-    const footer = req.body.footer;
-    const images = {
-        "main": req.body.images.main
-    }
-    const isPrivate = req.body.isPrivate;
-    const post = new Blogpost({ title, subtitle, description, author, date, tags, footer, images, isPrivate });
+  const title = req.body.title;
+  const subtitle = req.body.subtitle;
+  const description = req.body.description;
+  const author = req.body.author;
+  const date = req.body.date;
+  const tags = req.body.tags;
+  const footer = req.body.footer;
+  const images = {
+    "main": req.body.images.main
+  }
+  const isPrivate = req.body.isPrivate;
+  const post = new Blogpost({ title, subtitle, description, author, date, tags, footer, images, isPrivate });
 
-    post.save()
-        .then(() => res.json("New Blogpost Created"))
-        .catch(err => res.status(400).json("Error:" + err));
+  post.save()
+    .then(() => res.json("New Blogpost Created"))
+    .catch(err => res.status(400).json("Error:" + err));
 })
 
 // router.route("/add").post((req, res) => {
@@ -115,23 +120,23 @@ const createNewBlog = asyncHandler(async (req, res) => {
 // });
 
 const updateBlog = asyncHandler(async (req, res) => {
-    Blogpost.findById(req.params.id)
+  Blogpost.findById(req.params.id)
     .then(post => {
-        post.title = req.body.title
-        post.subtitle = req.body.subtitle
-        post.description = req.body.description
-        post.author = req.body.author
-        post.date = req.body.date
-        post.tags = req.body.tags
-        post.footer = req.body.footer
-        post.images = {
-            "main": req.body.images.main
-        }
-        post.isPrivate = req.body.isPrivate
+      post.title = req.body.title
+      post.subtitle = req.body.subtitle
+      post.description = req.body.description
+      post.author = req.body.author
+      post.date = req.body.date
+      post.tags = req.body.tags
+      post.footer = req.body.footer
+      post.images = {
+        "main": req.body.images.main
+      }
+      post.isPrivate = req.body.isPrivate
 
-        post.save()
-            .then(() => res.json("Post updated"))
-            .catch(err => res.status(400).json("Error: " + err));
+      post.save()
+        .then(() => res.json("Post updated"))
+        .catch(err => res.status(400).json("Error: " + err));
     })
     .catch(err => res.status(400).json("Error: " + err));
 })
@@ -159,30 +164,30 @@ const updateBlog = asyncHandler(async (req, res) => {
 // });
 
 const deleteBlog = asyncHandler(async (req, res) => {
-    Blogpost.findByIdAndDelete(req.params.id)
-        .then(post => res.json("Post deleted: " + post))
-        .catch(err => res.status(400).json("Error: " + err));
+  Blogpost.findByIdAndDelete(req.params.id)
+    .then(post => res.json("Post deleted: " + post))
+    .catch(err => res.status(400).json("Error: " + err));
 })
 
 router.route("/:id").delete((req, res) => {
-    Blogpost.findByIdAndDelete(req.params.id)
-        .then(post => res.json("Post deleted: " + post))
-        .catch(err => res.status(400).json("Error: " + err));
+  Blogpost.findByIdAndDelete(req.params.id)
+    .then(post => res.json("Post deleted: " + post))
+    .catch(err => res.status(400).json("Error: " + err));
 });
 
 // Mongo Section Update Promise - Fix for the fucked amount of concatenation in the next method
 async function SectionUpdatePromise(payload, res) {
-    return Promise.all(
+  return Promise.all(
 
-    )
+  )
 }
 
 module.exports = {
-    getAllBlogs,
-    getBlog,
-    createNewBlog,
-    updateBlog,
-    deleteBlog
+  paginatedResults,
+  getBlog,
+  createNewBlog,
+  updateBlog,
+  deleteBlog
 }
 
 // Update page section
